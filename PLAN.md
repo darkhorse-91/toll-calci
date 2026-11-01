@@ -77,14 +77,14 @@ flowchart TD
   - Rates on boundary dates (`effective_from` and `effective_to`).
 - **Done When**: 100% pure engine unit tests pass, type-checked with `mypy --strict`, with >=95% test coverage.
 
-#### Step 3: Web App Shell & Design System (Workstream 3 - Can run in parallel)
-- [ ] Initialize `web/` with Vite, React, TypeScript, and MapLibre GL JS.
-- [ ] Configure `web/src/strings.en.json` containing all user-facing strings.
-- [ ] Implement design tokens matching `Toll price MVP — free-stack design.html`:
+#### Step 3: Web App Shell & Design System (Workstream 3)
+- [x] Initialize `web/` with Vite, React, TypeScript, and MapLibre GL JS.
+- [x] Configure `web/src/strings.en.json` containing all user-facing strings.
+- [x] Implement design tokens matching `Toll price MVP — free-stack design.html`:
   - Highway milestone motif, Overpass typography, color palette (asphalt, concrete, sign green, cap yellow).
   - Dark mode and light mode CSS variables.
   - Accessible contrast (WCAG AA), responsive layout down to 360px viewport.
-- [ ] Scaffolding for Map component using `@maplibre/maplibre-gl-style-spec` and PMTiles protocol.
+- [x] Scaffolding for Map component using `@maplibre/maplibre-gl-style-spec` and PMTiles protocol.
 
 ---
 
@@ -101,13 +101,13 @@ flowchart TD
 - [x] Write API contract tests for 200 responses and error envelopes (`INVALID_INPUT`, `NO_ROUTE`, `UPSTREAM_UNAVAILABLE`).
 
 #### Step 5: Web App Form, Map & Quote Cards (Workstream 5)
-- [ ] Build search-as-you-type input with Photon integration, swap button, and keyboard navigation.
-- [ ] Build vehicle selector (6 canonical chips, Private/Commercial toggle for CAR_JEEP_VAN).
-- [ ] Build journey toggle (One way vs Return 24h), Annual pass toggle + optional trips left, collapsed date picker.
-- [ ] Bind form state to URL query parameters for shareability.
-- [ ] Render interactive map with route polylines and coin markers (filled = charged, outlined = pass covered).
-- [ ] Implement Quote card with all pass box variants (Fully covered, Partly covered, Trips run out, No pass savings, Not eligible).
-- [ ] Implement UI states: loading skeleton, `complete: false` banner, no route found, API error with retry.
+- [x] Build search-as-you-type input with Photon integration, swap button, and keyboard navigation.
+- [x] Build vehicle selector (6 canonical chips, Private/Commercial toggle for CAR_JEEP_VAN).
+- [x] Build journey toggle (One way vs Return 24h), Annual pass toggle + optional trips left, collapsed date picker.
+- [x] Bind form state to URL query parameters for shareability.
+- [x] Render interactive map with route polylines and coin markers (filled = charged, outlined = pass covered).
+- [x] Implement Quote card with all pass box variants (Fully covered, Partly covered, Trips run out, No pass savings, Not eligible).
+- [x] Implement UI states: loading skeleton, `complete: false` banner, no route found, API error with retry.
 
 ---
 

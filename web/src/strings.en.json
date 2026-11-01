@@ -1,0 +1,57 @@
+{
+  "app": {
+    "title": "Toll price first",
+    "subtitle": "Enter where you’re going and what you drive; get the exact toll, whether your FASTag annual pass covers it, and key route facts."
+  },
+  "form": {
+    "fromLabel": "From",
+    "toLabel": "To",
+    "swap": "Swap start and destination",
+    "vehicleLabel": "Vehicle",
+    "usageLabel": "Usage",
+    "private": "Private",
+    "commercial": "Commercial",
+    "journeyLabel": "Trip",
+    "oneWay": "One way",
+    "return24h": "Return within 24 hours",
+    "passToggle": "I have a FASTag annual pass",
+    "tripsLeftLabel": "Trips left (optional)",
+    "travelLaterToggle": "Travelling later?",
+    "dateLabel": "Travel date",
+    "submit": "Get toll",
+    "loading": "Calculating toll..."
+  },
+  "vehicles": {
+    "CAR_JEEP_VAN": "Car / jeep / van",
+    "LCV": "Mini bus / light goods",
+    "BUS_TRUCK_2AXLE": "Bus / truck (2 axle)",
+    "AXLE_3": "3-axle truck",
+    "AXLE_4_6": "4–6 axle truck",
+    "AXLE_7_PLUS": "Larger vehicle"
+  },
+  "quote": {
+    "youPay": "You pay",
+    "withoutPass": "Without pass",
+    "routeUsual": "Usual route",
+    "routeLowest": "Lowest toll",
+    "routeFree": "Toll free",
+    "passCovered": "Annual pass covers {covered} of {total} toll points. Uses {used} trips; {left} left after this journey.",
+    "passCoveredAssumed": "Annual pass covers {covered} of {total} toll points. Uses {used} trips (assuming trips left).",
+    "stateRoadNotCovered": "Not covered: {point} (₹{amount}), because state-run roads don't accept the pass.",
+    "tripsRunOut": "Your pass runs out of trips at {point}; tolls after that are charged.",
+    "noPassSavings": "With an annual pass you'd pay ₹{withPass} instead of ₹{withoutPass}. It pays for itself after {breakEven} trips like this.",
+    "noPassZeroSavings": "The annual pass doesn't help on this route.",
+    "notEligible": "The annual pass is only for private cars, jeeps and vans.",
+    "rateMissingBanner": "We don't have rates for {count} toll point on this route yet, so the total may be low.",
+    "rateNotAvailable": "Rate not available",
+    "aboutRoad": "About this road:",
+    "footerNotice": "Rates as of {date}. Paying without a FASTag costs more. Always check the plaza's notice board.",
+    "attribution": "© OpenStreetMap contributors"
+  },
+  "errors": {
+    "noRoute": "We couldn't find a road route between these places.",
+    "upstreamUnavailable": "Routing or place service is temporarily unavailable. Please try again.",
+    "generic": "Something went wrong getting the toll. Try again.",
+    "retry": "Try again"
+  }
+}
