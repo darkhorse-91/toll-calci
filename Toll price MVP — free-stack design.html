@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Toll price MVP — free-stack design</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Overpass:wght@400;600;800;900&family=Overpass+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --asphalt:#24272A; --concrete:#EEF0EC; --paper:#FBFBF8; --line:#C9CCC4;
+  --sign:#0B6B3A; --sign-ink:#FFFFFF; --cap:#F2C200; --cap-ink:#1C1C1C;
+  --state:#2E7D32; --red:#B3261E; --ink:#1E2124; --muted:#5B6168;
+  --code-bg:#E4E7E1; --table-head:#DDE3DA;
+  --bg:var(--concrete); --surface:var(--paper); --text:var(--ink);
+  color-scheme:light;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#16181A; --surface:#1F2225; --text:#E8EAE6; --muted:#A3A9AE; --line:#3A3F44;
+    --code-bg:#2A2E32; --table-head:#263129; --sign:#138A4C; --red:#F07A72; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#16181A; --surface:#1F2225; --text:#E8EAE6; --muted:#A3A9AE; --line:#3A3F44;
+  --code-bg:#2A2E32; --table-head:#263129; --sign:#138A4C; --red:#F07A72; color-scheme:dark;
+}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px);scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Overpass",system-ui,-apple-system,"Segoe UI",sans-serif;font-size:17px;line-height:1.6}
+a{color:var(--sign);text-underline-offset:3px}
+a:focus-visible,button:focus-visible{outline:3px solid var(--cap);outline-offset:2px}
+code,pre{font-family:"Overpass Mono",ui-monospace,Menlo,Consolas,monospace;font-size:.86em}
+code{background:var(--code-bg);padding:.08em .35em;border-radius:3px}
+pre{background:var(--code-bg);padding:1rem 1.1rem;border-radius:6px;overflow-x:auto;line-height:1.5}
+pre code{background:none;padding:0}
+pre.mermaid{background:var(--surface);border:1px solid var(--line);font-family:inherit;text-align:center;font-variant-ligatures:none}
+pre.mermaid svg{max-width:100%;height:auto}
+
+/* ---------- Hero: the milestone ---------- */
+.hero{background:var(--asphalt);color:#F4F4F0;position:relative;overflow:hidden}
+.hero::after{content:"";position:absolute;left:0;right:0;bottom:38px;height:6px;
+  background:repeating-linear-gradient(90deg,#F4F4F0 0 56px,transparent 56px 104px);opacity:.85}
+.hero-inner{max-width:1180px;margin:0 auto;padding:4.5rem 1.5rem 6rem;display:grid;grid-template-columns:minmax(0,1fr) 260px;gap:3rem;align-items:end}
+.hero h1{font-weight:900;font-size:clamp(2.3rem,5.4vw,4.1rem);line-height:1.02;letter-spacing:-.01em;margin:0 0 1.2rem;max-width:14ch}
+.hero p{max-width:60ch;color:#D6D8D3;margin:0 0 1rem}
+.hero .links{display:flex;flex-wrap:wrap;gap:.6rem;margin-top:1.6rem}
+.hero .links a{background:var(--sign);color:#fff;text-decoration:none;font-weight:600;padding:.55rem .9rem;border:2px solid #fff;border-radius:6px}
+.hero .links a:hover{background:#0E7F46}
+.stone{width:240px;justify-self:end;position:relative;z-index:1}
+.stone .cap{background:var(--cap);color:var(--cap-ink);border-radius:120px 120px 0 0;height:118px;display:flex;align-items:flex-end;justify-content:center;padding-bottom:10px;font-weight:900;font-size:2.6rem;letter-spacing:.02em}
+.stone .body{background:#FFFFFF;color:#1C1C1C;padding:1.1rem 1rem 1.4rem;text-align:center;border-bottom:16px solid #8F918B}
+.stone .place{font-weight:800;font-size:1.35rem;line-height:1.15}
+.stone .km{font-weight:900;font-size:3rem;line-height:1;margin-top:.35rem}
+.stone .km small{font-size:1.1rem;font-weight:800}
+.stone figcaption{color:#B9BCB6;font-size:.8rem;text-align:center;margin-top:.6rem}
+
+/* ---------- Layout ---------- */
+.wrap{max-width:1180px;margin:0 auto;padding:2.5rem 1.5rem 5rem;display:grid;grid-template-columns:220px minmax(0,1fr);gap:3rem}
+nav.toc{position:sticky;top:calc(env(safe-area-inset-top,0px) + 1.5rem);align-self:start}
+nav.toc ol{list-style:none;margin:0;padding:0;border-left:3px solid var(--line)}
+nav.toc li a{display:block;padding:.35rem 0 .35rem 1rem;color:var(--muted);text-decoration:none;font-size:.93rem;line-height:1.3;margin-left:-3px;border-left:3px solid transparent}
+nav.toc li a:hover{color:var(--text);border-left-color:var(--cap)}
+main{min-width:0}
+section{margin-bottom:4rem}
+section > h2{font-weight:800;font-size:1.85rem;line-height:1.15;margin:0 0 1rem;padding:.5rem .8rem;background:var(--sign);color:var(--sign-ink);border-radius:6px;display:inline-block}
+h3{font-weight:800;font-size:1.25rem;margin:2.2rem 0 .6rem}
+h4{font-weight:800;font-size:1.02rem;margin:1.6rem 0 .4rem}
+.prose{max-width:74ch}
+.prose p,.prose li{margin:0 0 .8rem}
+.note{border-left:5px solid var(--cap);background:var(--surface);padding:.9rem 1.1rem;margin:1.2rem 0;max-width:74ch;border-radius:0 6px 6px 0}
+.warn{border-left-color:var(--red)}
+.scroll{overflow-x:auto;margin:1rem 0 1.4rem;border:1px solid var(--line);border-radius:6px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:.92rem;line-height:1.45}
+th,td{text-align:left;vertical-align:top;padding:.6rem .75rem;border-bottom:1px solid var(--line)}
+th{background:var(--table-head);font-weight:800;white-space:nowrap}
+tbody tr:last-child td{border-bottom:none}
+td.grp{background:var(--bg);font-weight:800}
+.tag{display:inline-block;font-size:.78rem;font-weight:600;padding:.05rem .45rem;border-radius:3px;border:1px solid var(--line);white-space:nowrap}
+.tag.nh{background:var(--cap);color:#1C1C1C;border-color:var(--cap)}
+.tag.st{background:var(--state);color:#fff;border-color:var(--state)}
+.tag.bad{background:var(--red);color:#fff;border-color:var(--red)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:1.2rem;margin:1rem 0}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:1rem 1.1rem}
+.card h4{margin-top:0}
+.card ul{margin:.3rem 0 0;padding-left:1.1rem}
+.phase{display:grid;grid-template-columns:auto 1fr;gap:.2rem 1rem;margin:.9rem 0;max-width:74ch}
+.phase b{font-weight:900;color:var(--sign)}
+footer{color:var(--muted);font-size:.85rem;border-top:1px solid var(--line);padding-top:1rem}
+
+@media (max-width:900px){
+  .hero-inner{grid-template-columns:1fr;padding-top:3rem}
+  .stone{justify-self:start;width:190px}
+  .stone .cap{height:94px;font-size:2.1rem}
+  .wrap{grid-template-columns:1fr;gap:1rem}
+  nav.toc{position:static}
+  nav.toc ol{display:flex;flex-wrap:wrap;border-left:none;gap:.3rem}
+  nav.toc li a{border:1px solid var(--line);border-radius:4px;padding:.3rem .6rem;margin:0}
+  .two{grid-template-columns:1fr}
+}
+
+.mock{max-width:560px;background:var(--surface);border:1px solid var(--line);border-radius:10px;overflow:hidden;margin:1.2rem 0 .4rem}
+.mock .bar{background:var(--sign);color:#fff;padding:.8rem 1.1rem}
+.mock .bar b{font-size:1.05rem}
+.mock .bar span{display:block;font-size:.85rem;opacity:.9}
+.mock .total{display:flex;justify-content:space-between;align-items:baseline;padding:1rem 1.1rem;border-bottom:1px solid var(--line)}
+.mock .total .amt{font-size:2.4rem;font-weight:900;line-height:1}
+.mock .total small{color:var(--muted)}
+.mock .pass{margin:.9rem 1.1rem;padding:.8rem .9rem;border-radius:6px;background:var(--bg);border-left:5px solid var(--cap)}
+.mock .pass p{margin:.15rem 0;font-size:.93rem}
+.mock ul{list-style:none;margin:0;padding:0 1.1rem}
+.mock li{display:flex;justify-content:space-between;gap:1rem;padding:.55rem 0;border-bottom:1px dashed var(--line);font-size:.93rem}
+.mock li:last-child{border-bottom:none}
+.mock .facts{padding:.8rem 1.1rem 1rem;border-top:1px solid var(--line);font-size:.9rem}
+.mock .facts p{margin:.25rem 0}
+.caption{color:var(--muted);font-size:.85rem;margin:0 0 1.4rem}
+</style>
+</head>
+<body>
+<header class="hero">
+  <div class="hero-inner">
+    <div>
+      <h1>Toll price first</h1>
+      <p>A focused design for Approach A. Enter where you’re going and what you drive; get the exact toll, whether your FASTag annual pass covers it, and a few plain facts about the road. Built only on free and open data.</p>
+      <div class="links">
+        <a href="https://lucid.app/lucidchart/6559fa46-b68d-44a3-bea1-d76b9a85488b/view" target="_blank" rel="noopener">MVP diagrams (Lucid)</a>
+        <a href="https://claude.ai/artifact/S3GgKQGUmBbGfzDMdvHF9Z" target="_blank" rel="noopener">Full design (both approaches)</a>
+      </div>
+    </div>
+    <figure class="stone" aria-label="Illustration of a national highway milestone">
+      <div class="cap">NH</div>
+      <div class="body"><div class="place">Toll price MVP</div><div class="km">₹<small> first</small></div></div>
+      <figcaption>Design as of 31 Oct 2026</figcaption>
+    </figure>
+  </div>
+</header>
+
+<div class="wrap">
+  <nav class="toc" aria-label="Sections">
+    <ol>
+      <li><a href="#product">What the user gets</a></li>
+      <li><a href="#scope">Scope</a></li>
+      <li><a href="#rules">Toll and pass rules</a></li>
+      <li><a href="#architecture">Architecture</a></li>
+      <li><a href="#data">Free data sources</a></li>
+      <li><a href="#insights">Route insights</a></li>
+      <li><a href="#api">API contract</a></li>
+      <li><a href="#model">Data model</a></li>
+      <li><a href="#plan">Build plan and risks</a></li>
+    </ol>
+  </nav>
+<main>
+
+<section id="product">
+  <h2>What the user gets</h2>
+  <div class="prose"><p>One screen, three answers: how much the toll is, whether the annual pass applies on this route, and a few facts about the road. Everything else is secondary.</p></div>
+
+  <div class="mock" role="img" aria-label="Example quote card">
+    <div class="bar"><b>City A → City B</b><span>Car, private · one way · annual pass active, 140 trips left</span></div>
+    <div class="total">
+      <div><small>You pay</small><div class="amt">₹640</div></div>
+      <div style="text-align:right"><small>Without pass</small><div><b>₹1,075</b></div></div>
+    </div>
+    <div class="pass">
+      <p><b>Annual pass covers 3 of 4 toll points.</b> Uses 3 trips; 137 left after this journey.</p>
+      <p>Not covered: the state expressway section (₹640), because state-run roads don’t accept the pass.</p>
+    </div>
+    <ul>
+      <li><span>NH plaza 1 · NHAI</span><span>₹0 <small>(pass)</small></span></li>
+      <li><span>NH plaza 2 · NHAI</span><span>₹0 <small>(pass)</small></span></li>
+      <li><span>NH plaza 3 · NHAI</span><span>₹0 <small>(pass)</small></span></li>
+      <li><span>Expressway entry → exit · state authority</span><span>₹640</span></li>
+    </ul>
+    <div class="facts">
+      <p><b>About this road:</b> 4 toll points over 410 km of tolled road, about ₹2.6 per km.</p>
+      <p>Busiest plaza on the route: NH plaza 2, about 1.1 crore FASTag crossings last year.</p>
+      <p>Around 1 in 5 car crossings at these NH plazas used the annual pass.</p>
+      <p><small>FASTag data from IHMCL monthly reports, FY 2025–26. Rates as of 1 Apr 2026.</small></p>
+    </div>
+  </div>
+  <p class="caption">Illustrative figures only, to show layout and wording; they are not real rates or statistics.</p>
+
+  <div class="prose">
+    <p>If the user has no pass, the pass box flips to a savings answer instead: “With an annual pass you’d pay ₹640 instead of ₹1,075 on this trip. The pass pays for itself after about 8 such trips.” If the vehicle isn’t eligible (any commercial vehicle, or anything bigger than a car, jeep or van), it says so in one line and shows only the toll.</p>
+  </div>
+</section>
+
+<section id="scope">
+  <h2>Scope</h2>
+  <div class="two">
+    <div class="card"><h4>In</h4><ul>
+      <li>Toll for every vehicle class on NH, NE and state toll roads</li>
+      <li>One-way and return within 24 hours</li>
+      <li>Annual pass eligibility, coverage and trips used</li>
+      <li>Up to three routes: usual, lowest toll, toll-free (if one exists)</li>
+      <li>Three or four facts about the road from last year’s data</li>
+    </ul></div>
+    <div class="card"><h4>Out (for now)</h4><ul>
+      <li>Live traffic and exact travel time (estimate only)</li>
+      <li>Fuel cost and trip budgeting</li>
+      <li>Local-resident and monthly passes</li>
+      <li>Chat or voice interface (Approach B)</li>
+      <li>User accounts; nothing is stored about the user</li>
+    </ul></div>
+  </div>
+</section>
+
+<section id="rules">
+  <h2>Toll and pass rules</h2>
+  <div class="prose">
+    <p>This is the product. Every rule below lives in the database as data, so a rule change is a data update, not a code release. The flowchart is page 2 of the <a href="https://lucid.app/lucidchart/6559fa46-b68d-44a3-bea1-d76b9a85488b/view" target="_blank" rel="noopener">Lucid document</a>.</p>
+  </div>
+  <div class="scroll"><table>
+    <thead><tr><th>Rule</th><th>How the engine applies it</th></tr></thead>
+    <tbody>
+      <tr><td>Charging points</td><td>A route passes either point-based plazas (pay at each) or closed sections (pay by entry–exit pair). Both are “charging points”.</td></tr>
+      <tr><td>Rate</td><td>Looked up by point, vehicle class, journey type (single or return within 24 h) and travel date, so a trip after 1 April gets the new year’s rate.</td></tr>
+      <tr><td>Pass eligibility</td><td>Only non-commercial cars, jeeps and vans with an active pass. Everyone else pays the full rate.</td></tr>
+      <tr><td>Where the pass works</td><td>Only at points run by NHAI or MoRTH on NH and NE roads. Each point carries a <code>pass_accepted</code> flag; state roads such as the UP expressways, Samruddhi, Mumbai–Pune and Atal Setu are false.</td></tr>
+      <tr><td>Trip counting</td><td>Each plaza crossing counts as one trip; a return through the same plaza counts as two. A closed section’s entry–exit pair counts as one trip, however many gantries it has.</td></tr>
+      <tr><td>Running out of trips</td><td>Covered points are taken in travel order until trips run out; later points are charged and marked “pass trips used up”.</td></tr>
+      <tr><td>Pass price</td><td>₹3,075 for FY 2026–27, one year or 200 trips, whichever comes first. Stored per financial year.</td></tr>
+      <tr><td>Break-even</td><td>Trips to pay off = ₹3,075 ÷ (toll without pass − toll with pass) for this journey, shown only when the user has no pass.</td></tr>
+    </tbody>
+  </table></div>
+  <div class="note"><p><b>Always show the reason.</b> When the pass doesn’t apply at a point, the quote says why: not eligible, state road, or trips used up. That explanation is what users can’t easily get elsewhere.</p></div>
+</section>
+
+<section id="architecture">
+  <h2>Architecture</h2>
+  <div class="prose"><p>Small on purpose: one web app, one API service with the toll engine inside it, one database, and three self-hosted open-source map services. Data comes in through scheduled jobs with a human check on rate changes.</p></div>
+<pre class="mermaid">
+flowchart LR
+  U[Traveller] --> W[Web app]
+  W --> T[Map tiles: Protomaps]
+  W -->|POST /quote| A[Quote API]
+  A --> G[Place search: Photon]
+  A --> E[Toll and pass engine]
+  E --> V[Routing: Valhalla]
+  E --> D[(PostgreSQL + PostGIS)]
+  S[Free sources] --> J[Scheduled jobs]
+  J --> RV[Admin review]
+  RV --> D
+</pre>
+  <div class="scroll"><table>
+    <thead><tr><th>Component</th><th>Choice</th><th>Why</th><th>Licence</th></tr></thead>
+    <tbody>
+      <tr><td>Web app</td><td>Static site + MapLibre GL</td><td>Cheap to host; draws the route and toll points</td><td>BSD</td></tr>
+      <tr><td>Map tiles</td><td>Protomaps (one PMTiles file of India)</td><td>Serve from object storage; no tile server to run</td><td>BSD; map data ODbL</td></tr>
+      <tr><td>Place search</td><td>Photon on OSM India</td><td>Search-as-you-type for towns and cities</td><td>Apache 2.0</td></tr>
+      <tr><td>Routing</td><td>Valhalla on OSM India</td><td>Can prefer or avoid tolls, gives alternatives and the route shape</td><td>MIT</td></tr>
+      <tr><td>Quote API + engine</td><td>One service (Python or Go)</td><td>The toll engine is small; no need to split it</td><td>Your code</td></tr>
+      <tr><td>Database</td><td>PostgreSQL + PostGIS</td><td>Spatial match of route to plazas; versioned rates</td><td>PostgreSQL, GPL</td></tr>
+      <tr><td>Jobs</td><td>Cron or a scheduled CI job</td><td>Weekly scrape, monthly stats, extra runs in late March and April</td><td>—</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>How one quote is computed</h3>
+  <div class="prose">
+    <p>The API resolves the two places, then asks Valhalla for up to three routes: the usual one, one that prefers lower tolls, and one that avoids tolls entirely. For each route the engine finds the toll plazas within about 50 m of the route line (checking direction so the opposite carriageway isn’t counted) and the entry and exit points of any closed section. It prices each point, applies the pass rules in travel order, adds up the totals and attaches the route facts. Everything except the routing call is a few database lookups, so a quote should take well under a second after the route comes back.</p>
+  </div>
+</section>
+
+<section id="data">
+  <h2>Free data sources</h2>
+  <div class="scroll"><table>
+    <thead><tr><th>Data</th><th>Source</th><th>Refresh</th><th>Note</th></tr></thead>
+    <tbody>
+      <tr><td>Road network, places</td><td>OpenStreetMap India extract (Geofabrik)</td><td>Monthly</td><td>Credit “© OpenStreetMap contributors”</td></tr>
+      <tr><td>NH and NE plazas, rates by class</td><td><a href="https://tis.nhai.gov.in" target="_blank" rel="noopener">NHAI Toll Information System</a></td><td>Weekly; daily around 1 April</td><td>No API: maintain a scraper and respect the site’s terms</td></tr>
+      <tr><td>Legal rate and effective date</td><td>Gazette fee notifications linked from TIS</td><td>On change</td><td>Use to confirm scraped rates</td></tr>
+      <tr><td>State expressways</td><td>UPEIDA, YEIDA, MSRDC and other state sites</td><td>Monthly check</td><td>Manual curation; start with the busiest corridors</td></tr>
+      <tr><td>Annual pass rules</td><td>NHAI and IHMCL FAQ, gazette</td><td>On change</td><td>Price, eligibility, trip counting</td></tr>
+      <tr><td>Plaza traffic and collection</td><td><a href="https://ihmcl.co.in/etc-transaction-reports/" target="_blank" rel="noopener">IHMCL ETC transaction reports</a></td><td>Monthly</td><td>Vehicle-class FASTag report, annual pass report, MLFF plazas; PDFs</td></tr>
+      <tr><td>Older and state-level figures</td><td>data.gov.in, Parliament answers</td><td>As released</td><td>Open government licence, attribution needed</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section id="insights">
+  <h2>Route insights</h2>
+  <div class="prose">
+    <p>Keep it to three or four plain facts, each computed by summing a pre-built per-plaza table over the plazas on the route:</p>
+  </div>
+  <div class="scroll"><table>
+    <thead><tr><th>Fact shown</th><th>Computed from</th></tr></thead>
+    <tbody>
+      <tr><td>Number of toll points, and toll per km of tolled road</td><td>The quote itself</td></tr>
+      <tr><td>Busiest plaza on the route last year</td><td>FASTag crossings per plaza, last financial year</td></tr>
+      <tr><td>FASTag toll collected at these plazas last year</td><td>FASTag value per plaza, last financial year</td></tr>
+      <tr><td>Share of car crossings that used the annual pass</td><td>Annual pass report ÷ car-class crossings, NH plazas only</td></tr>
+    </tbody>
+  </table></div>
+  <div class="prose">
+    <p>The hard part is matching IHMCL’s plaza names to TIS plaza IDs: do a fuzzy name match within the same state, then review the leftovers by hand once; after that only new plazas need attention. Label every fact with its period and “FASTag data”, because cash and exempt vehicles aren’t counted, and IHMCL notes its figures can change after reconciliation. If a route’s plazas aren’t in the reports, show nothing rather than a guess. Pipeline: page 3 of the Lucid document.</p>
+  </div>
+</section>
+
+<section id="api">
+  <h2>API contract</h2>
+<pre><code>POST /v1/quote
+{
+  "from": "place:abc123",  "to": "place:def456",
+  "vehicle_class": "CAR_JEEP_VAN",      // or LCV, BUS_TRUCK_2AXLE, AXLE_3, AXLE_4_6, AXLE_7_PLUS
+  "commercial": false,
+  "journey": "ONE_WAY",                 // or RETURN_24H
+  "travel_date": "2026-11-02",
+  "annual_pass": { "active": true, "trips_left": 140 }   // trips_left optional
+}
+
+200 OK
+{
+  "rates_as_of": "2026-04-01",
+  "routes": [{
+    "label": "USUAL",                    // USUAL | LOWEST_TOLL | TOLL_FREE
+    "distance_km": 0, "est_duration_min": 0,
+    "toll_with_pass": 0, "toll_without_pass": 0,
+    "pass": {
+      "eligible": true, "points_covered": 3, "points_total": 4,
+      "trips_used": 3, "trips_left_after": 137,
+      "break_even_trips": null
+    },
+    "points": [
+      { "name": "…", "operator": "NHAI", "type": "PLAZA",
+        "amount": 0, "pass_applied": true, "reason": null },
+      { "name": "…", "operator": "UPEIDA", "type": "CLOSED_SECTION",
+        "amount": 0, "pass_applied": false, "reason": "STATE_ROAD" }
+    ],
+    "insights": [
+      { "key": "busiest_plaza", "text": "…", "period": "FY2025-26", "source": "IHMCL" }
+    ]
+  }]
+}</code></pre>
+  <div class="prose"><p>Numbers in the example are placeholders. The <code>reason</code> codes are <code>NOT_ELIGIBLE</code>, <code>STATE_ROAD</code> and <code>TRIPS_USED_UP</code>; the web app turns them into plain sentences.</p></div>
+</section>
+
+<section id="model">
+  <h2>Data model</h2>
+  <div class="scroll"><table>
+    <thead><tr><th>Table</th><th>Holds</th></tr></thead>
+    <tbody>
+      <tr><td><code>operator</code></td><td>NHAI, MoRTH, each state authority; <code>pass_accepted</code></td></tr>
+      <tr><td><code>charging_point</code></td><td>Plaza or closed section; location or entry/exit geometry; operator; TIS ID</td></tr>
+      <tr><td><code>interchange</code></td><td>Entry and exit points of closed sections</td></tr>
+      <tr><td><code>vehicle_class</code></td><td>Canonical classes plus each operator’s own names mapped to them</td></tr>
+      <tr><td><code>rate</code></td><td>Point (or entry–exit pair), class, journey type, amount, <code>effective_from</code>, <code>effective_to</code>, source document</td></tr>
+      <tr><td><code>pass_product</code></td><td>Price, trip limit and validity per financial year; eligible classes</td></tr>
+      <tr><td><code>plaza_stats</code></td><td>Per plaza per financial year: crossings and value by class, annual pass crossings</td></tr>
+      <tr><td><code>source_document</code></td><td>URL, fetch time, checksum, reviewer, for every rate and statistic</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section id="plan">
+  <h2>Build plan and risks</h2>
+  <div class="phase"><b>Step 1</b><span>NH and NE plazas from TIS, car class, one-way, annual pass rules, usual route only. This alone answers the main question for most users.</span></div>
+  <div class="phase"><b>Step 2</b><span>All vehicle classes, return journeys, lowest-toll and toll-free routes.</span></div>
+  <div class="phase"><b>Step 3</b><span>Closed-section matrices for the busiest state expressways (UP, Maharashtra, Haryana, Gujarat), then the rest.</span></div>
+  <div class="phase"><b>Step 4</b><span>Route insights from IHMCL reports, once plaza name matching is done.</span></div>
+  <div class="prose">
+    <p><b>Accuracy is the brand.</b> Keep a test set of a few hundred journeys with hand-checked totals from official notices and run it on every rate update. A wrong toll does more damage than a missing feature.</p>
+    <p><b>Scraping risk.</b> TIS has no API and its pages can change. Watch every scrape for missing plazas or large rate jumps, and hold changes for review rather than publishing them automatically.</p>
+    <p><b>State coverage.</b> Until a state road is curated, show its toll as “not yet available” on the route instead of leaving it out of the total silently.</p>
+    <p><b>Statistics licence.</b> IHMCL publishes its reports freely but without an open licence; show derived figures with attribution, and ask IHMCL before redistributing the raw data.</p>
+  </div>
+  <footer>Rates, pass rules and exclusions change; verify against NHAI, IHMCL and state notices before relying on any figure in production.</footer>
+</section>
+
+</main>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
+<script>
+(function () {
+  if (!window.mermaid) return;
+  var dark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+  try {
+    mermaid.initialize({ startOnLoad: false, theme: dark ? 'dark' : 'default', securityLevel: 'strict', flowchart: { htmlLabels: false, curve: 'basis' } });
+    mermaid.run({ querySelector: 'pre.mermaid:not([data-processed])', suppressErrors: true });
+  } catch (e) { console.error(e); }
+})();
+</script>
+
+<!--claude-mermaid-runtime-begin:3477-->
+<style>.mermaid-diagram{margin-block:4px}.mermaid-diagram svg{display:block;margin:0 auto;max-width:100%;height:auto}</style>
+<script src="/_runtime/mermaid-11.16.1.min.js"></script>
+<script>(function(){
+var CFG={"palettes":{"light":{"surface":"#f4efe4","text":"#42392e","line":"#8a7f6d","border":"#7a6c52","bg":"#fffdf8"},"dark":{"surface":"#262b34","text":"#f2f3f5","line":"#a8adb8","border":"#9aa4b8","bg":"#1f232b"}}};
+if(typeof mermaid==='undefined')return;
+var pres=Array.prototype.slice.call(document.querySelectorAll('pre.mermaid')).filter(function(p){if(p.hasAttribute('data-claude-mermaid-claimed'))return false;p.setAttribute('data-claude-mermaid-claimed','1');return true;});
+if(!pres.length)return;
+var mq=window.matchMedia?window.matchMedia('(prefers-color-scheme: dark)'):null;
+var root=document.documentElement;
+var items=pres.map(function(pre){
+var mount=document.createElement('div');mount.className='mermaid-diagram';
+return {pre:pre,mount:mount,src:pre.textContent||''};
+});
+var seq=0;
+var renderGen=0;
+var lastKey='';
+function pageBg(fallback){
+var els=[document.body,document.documentElement];
+for(var i=0;i<els.length;i++){
+var c=els[i]&&getComputedStyle(els[i]).backgroundColor;
+if(c&&c!=='transparent'&&c!=='rgba(0, 0, 0, 0)')return c;
+}
+return fallback;
+}
+function render(){
+var theme=root.getAttribute('data-theme');
+var dark=theme==='dark'||(!!(mq&&mq.matches)&&theme!=='light');
+var pal=dark?CFG.palettes.dark:CFG.palettes.light;
+var bg=pageBg(pal.bg);
+var key=(dark?'d':'l')+'|'+bg;
+if(key===lastKey)return;
+lastKey=key;
+var gen=++renderGen;
+var font=getComputedStyle(document.body).fontFamily||'sans-serif';
+var nat={useMaxWidth:false};
+mermaid.initialize({
+startOnLoad:false,securityLevel:'strict',theme:'base',
+flowchart:nat,sequence:nat,er:nat,state:nat,class:nat,pie:nat,
+gantt:nat,journey:nat,timeline:nat,gitGraph:nat,mindmap:nat,xyChart:nat,
+quadrantChart:nat,sankey:nat,c4:nat,requirement:nat,block:nat,
+packet:nat,kanban:nat,architecture:nat,radar:nat,
+themeVariables:{background:bg,mainBkg:pal.surface,primaryColor:pal.surface,
+primaryTextColor:pal.text,lineColor:pal.line,primaryBorderColor:pal.border,
+nodeBorder:pal.border,clusterBorder:pal.border,edgeLabelBackground:bg,
+clusterBkg:'rgba(127,127,127,0.07)',titleColor:pal.text,
+darkMode:dark,rowOdd:bg,rowEven:'rgba(127,127,127,0.07)',
+attributeBackgroundColorOdd:bg,attributeBackgroundColorEven:'rgba(127,127,127,0.07)',
+fontSize:'16px',fontFamily:font},
+themeCSS:'.node rect, .node circle, .node polygon, .node path, .cluster rect { stroke-width: 2px; }'
+});
+items.forEach(function(it){
+var id='claude-mermaid-'+seq++;
+mermaid.render(id,it.src).then(function(r){
+if(gen!==renderGen)return;
+var prev=it.pre.previousElementSibling;
+if(prev&&prev.className==='mermaid-diagram'&&prev!==it.mount)return;
+it.mount.innerHTML=r.svg;
+if(!it.mount.parentNode)it.pre.parentNode.insertBefore(it.mount,it.pre);
+it.pre.style.display='none';
+},function(){
+var scratch=document.getElementById(id);
+if(scratch)scratch.parentNode.removeChild(scratch);
+scratch=document.getElementById('d'+id);
+if(scratch)scratch.parentNode.removeChild(scratch);
+if(gen!==renderGen)return;
+if(it.mount.parentNode)it.mount.parentNode.removeChild(it.mount);
+it.pre.style.display='';
+});
+});
+}
+render();
+if(mq&&mq.addEventListener)mq.addEventListener('change',render);
+if(typeof MutationObserver!=='undefined')new MutationObserver(render).observe(root,{attributes:true,attributeFilter:['data-theme']});
+})();</script>
+<!--claude-mermaid-runtime-end-->
+</body>
+</html>

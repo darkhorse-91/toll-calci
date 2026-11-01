@@ -1,0 +1,40 @@
+# Environments
+.env
+.env.local
+.venv
+env/
+venv/
+ENV/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+*.egg-info/
+dist/
+build/
+
+# Node & Frontend
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+web/dist/
+web/.vite/
+
+# Valhalla & Photon data extracts
+valhalla_tiles/
+photon_data/
+*.pbf
+*.pmtiles
+
+# OS & IDE
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/

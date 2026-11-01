@@ -1,0 +1,101 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgis/postgis:16-3.4
+    container_name: toll_mvp_db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: toll_mvp
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./db/migrations/001_schema.sql:/docker-entrypoint-initdb.d/01_schema.sql:ro
+      - ./db/seed/seed.sql:/docker-entrypoint-initdb.d/02_seed.sql:ro
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d toll_mvp"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  valhalla:
+    image: gisops/valhalla:latest
+    container_name: toll_mvp_valhalla
+    environment:
+      - tile_urls=${OSM_EXTRACT_URL:-https://download.geofabrik.de/asia/india/uttar-pradesh-latest.osm.pbf}
+      - build_elevation=False
+      - build_admins=True
+      - server_threads=2
+    ports:
+      - "8002:8002"
+    volumes:
+      - valhalla_tiles:/custom_files
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8002/status || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+    restart: unless-stopped
+
+  photon:
+    image: komoot/photon:latest
+    container_name: toll_mvp_photon
+    ports:
+      - "2322:2322"
+    volumes:
+      - photon_data:/photon/photon_data
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f 'http://localhost:2322/api?q=delhi&limit=1' || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+    restart: unless-stopped
+
+  api:
+    build:
+      context: ./api
+      dockerfile: Dockerfile
+    container_name: toll_mvp_api
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@db:5432/toll_mvp
+      VALHALLA_URL: http://valhalla:8002
+      PHOTON_URL: http://photon:2322
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-change-me-in-production-toll-admin}
+    ports:
+      - "8000:8000"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8000/healthz || exit 1"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  web:
+    build:
+      context: ./web
+      dockerfile: Dockerfile
+    container_name: toll_mvp_web
+    ports:
+      - "5173:80"
+    depends_on:
+      api:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:80/ || exit 1"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+volumes:
+  pgdata:
+  valhalla_tiles:
+  photon_data:
