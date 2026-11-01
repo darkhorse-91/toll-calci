@@ -47,7 +47,7 @@ flowchart TD
 - [x] Create `docker-compose.yml` with `db` (PostGIS 16), `valhalla`, `photon`, `api`, `web`, and health checks.
 - [x] Create `.env.example` defining `DATABASE_URL`, `VALHALLA_URL`, `PHOTON_URL`, `ADMIN_PASSWORD`.
 - [x] Create `db/seed/seed.sql` with real coordinates in UP (e.g. NH-27 plazas, Agra-Lucknow expressway entry/exits), rates for both sides of April 1, and sample IHMCL stats.
-- [ ] Implement database integration tests verifying:
+- [x] Implement database integration tests verifying:
   - Route matching in travel order via `plazas_on_route` and `closed_sections_on_route`.
   - Exclusion of crossing roads (>30° bearing deviation).
   - Effective date rate selection across April 1.
@@ -91,14 +91,14 @@ flowchart TD
 ### Phase 2: API Service & Full UI Integration
 
 #### Step 4: Quote API Implementation (Workstream 4)
-- [ ] Initialize FastAPI app in `api/app/main.py`.
-- [ ] Configure `api/app/clients/photon.py` proxying search to Photon (`/v1/places`).
-- [ ] Configure `api/app/clients/valhalla.py` requesting routes with `auto` costing, route alternatives (`alternates: 1`, `use_tolls: 0.1`, `use_tolls: 0`), 5s timeout, precision-6 polyline decoding.
-- [ ] Implement database queries calling `plazas_on_route`, `closed_sections_on_route`, and `rate_for`.
-- [ ] Connect pure engine to produce `/v1/quote` response schema.
-- [ ] Add `/healthz` (liveness) and `/readyz` (DB, Valhalla, Photon connectivity checks).
-- [ ] Implement structured JSON logging per quote (route count, point count, rate version, lat/lng clamped to 2 decimals).
-- [ ] Write API contract tests for 200 responses and error envelopes (`INVALID_INPUT`, `NO_ROUTE`, `UPSTREAM_UNAVAILABLE`).
+- [x] Initialize FastAPI app in `api/app/main.py`.
+- [x] Configure `api/app/clients/photon.py` proxying search to Photon (`/v1/places`).
+- [x] Configure `api/app/clients/valhalla.py` requesting routes with `auto` costing, route alternatives (`alternates: 1`, `use_tolls: 0.1`, `use_tolls: 0`), 5s timeout, precision-6 polyline decoding.
+- [x] Implement database queries calling `plazas_on_route`, `closed_sections_on_route`, and `rate_for`.
+- [x] Connect pure engine to produce `/v1/quote` response schema.
+- [x] Add `/healthz` (liveness) and `/readyz` (DB, Valhalla, Photon connectivity checks).
+- [x] Implement structured JSON logging per quote (route count, point count, rate version, lat/lng clamped to 2 decimals).
+- [x] Write API contract tests for 200 responses and error envelopes (`INVALID_INPUT`, `NO_ROUTE`, `UPSTREAM_UNAVAILABLE`).
 
 #### Step 5: Web App Form, Map & Quote Cards (Workstream 5)
 - [ ] Build search-as-you-type input with Photon integration, swap button, and keyboard navigation.
