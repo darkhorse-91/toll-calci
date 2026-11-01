@@ -179,7 +179,9 @@ npm test
 ## 6. Documentation Index
 
 - **[docs/IMPLEMENTATION.md](file:///Users/darkhorse/Projects/toll-calci/docs/IMPLEMENTATION.md)**: Deep dive into the as-built architecture, life of a quote, rule data model, and testing strategy.
+- **[docs/REVIEW.md](file:///Users/darkhorse/Projects/toll-calci/docs/REVIEW.md)**: Comprehensive implementation review against system requirements, compliance matrix, and prioritized action items.
 - **[docs/DEPLOYMENT.md](file:///Users/darkhorse/Projects/toll-calci/docs/DEPLOYMENT.md)**: Production deployment on an Indian cloud VPS (16 GB RAM), OSM tile refresh, TLS, backups, and the April 1 rate change runbook.
 - **[docs/SCALABILITY.md](file:///Users/darkhorse/Projects/toll-calci/docs/SCALABILITY.md)**: Capacity benchmarks (82 req/s), bottleneck order, 4-tier horizontal scaling roadmap, and cost projections.
 - **[DECISIONS.md](file:///Users/darkhorse/Projects/toll-calci/DECISIONS.md)**: Architecture Decision Records (ADRs) detailing choices made where the original spec was silent.
 - **[PLAN.md](file:///Users/darkhorse/Projects/toll-calci/PLAN.md)**: Completed build order and verification checklist.
+

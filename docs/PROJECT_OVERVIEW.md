@@ -95,3 +95,4 @@ sequenceDiagram
 - **ADR 002 — Spatial Plaza Road Bearing Tolerance**: Incorporated a 30° tangent azimuth check in `plazas_on_route` to reject perpendicular cross streets intersecting the route corridor within the 50 m buffer.
 - **ADR 003 — Pass Configuration as Database Data**: Stored annual pass price, 200-trip limits, and eligible vehicle classes in the `annual_pass_rule` table with date range validity.
 - **ADR 004 — Vector Map Delivery with Fallback**: MapLibre GL uses vector tiles with automated raster tile fallback to ensure instant local developer display without requiring an upfront 12 GB download.
+
