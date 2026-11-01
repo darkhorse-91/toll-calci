@@ -42,11 +42,11 @@ flowchart TD
 ### Phase 1: Foundation, Engine & Frontend Scaffolding (Parallelized)
 
 #### Step 1: Foundation & Database (Workstream 1)
-- [ ] Create repository directory tree (`db/migrations/`, `db/seed/`, `api/app/`, `web/`, `jobs/`, `golden/`, `docs/`).
-- [ ] Create `db/migrations/001_schema.sql` copying the tested PostgreSQL 16 + PostGIS schema verbatim.
-- [ ] Create `docker-compose.yml` with `db` (PostGIS 16), `valhalla`, `photon`, `api`, `web`, and health checks.
-- [ ] Create `.env.example` defining `DATABASE_URL`, `VALHALLA_URL`, `PHOTON_URL`, `ADMIN_PASSWORD`.
-- [ ] Create `db/seed/seed.sql` with real coordinates in UP (e.g. NH-27 plazas, Agra-Lucknow expressway entry/exits), rates for both sides of April 1, and sample IHMCL stats.
+- [x] Create repository directory tree (`db/migrations/`, `db/seed/`, `api/app/`, `web/`, `jobs/`, `golden/`, `docs/`).
+- [x] Create `db/migrations/001_schema.sql` copying the tested PostgreSQL 16 + PostGIS schema verbatim.
+- [x] Create `docker-compose.yml` with `db` (PostGIS 16), `valhalla`, `photon`, `api`, `web`, and health checks.
+- [x] Create `.env.example` defining `DATABASE_URL`, `VALHALLA_URL`, `PHOTON_URL`, `ADMIN_PASSWORD`.
+- [x] Create `db/seed/seed.sql` with real coordinates in UP (e.g. NH-27 plazas, Agra-Lucknow expressway entry/exits), rates for both sides of April 1, and sample IHMCL stats.
 - [ ] Implement database integration tests verifying:
   - Route matching in travel order via `plazas_on_route` and `closed_sections_on_route`.
   - Exclusion of crossing roads (>30° bearing deviation).
@@ -55,16 +55,16 @@ flowchart TD
 - **Done When**: `docker compose up` brings services healthy, schema and seed load cleanly, and all DB tests pass.
 
 #### Step 2: Toll & Pass Engine (Workstream 2 - Can run in parallel with Step 1)
-- [ ] Setup `api/app/engine/models.py`:
+- [x] Setup `api/app/engine/models.py`:
   - Typed Pydantic v2 / dataclasses for `PointWithRate`, `PassInput`, `VehicleInput`, `PointResult`, `RouteResult`.
   - Canonical enums (`VehicleClassCode`, `JourneyType`, `ReasonCode`).
-- [ ] Setup `api/app/engine/calculator.py`:
+- [x] Setup `api/app/engine/calculator.py`:
   - Pure function: `apply_pass_and_compute_totals(points, vehicle, journey, pass_input, pass_product) -> RouteResult`.
   - FIFO point consumption along travel order.
   - Reason assignment: `NOT_ELIGIBLE`, `STATE_ROAD`, `TRIPS_USED_UP`, `RATE_MISSING`.
   - Trip unit multiplier: default 1, doubled for `RETURN_24H`.
   - Break-even calculation: `pass_price / (toll_without_pass - toll_with_pass)` rounded up.
-- [ ] Setup `api/tests/test_engine.py`:
+- [x] Setup `api/tests/test_engine.py`:
   - No pass scenario.
   - Commercial vehicle exclusion (`NOT_ELIGIBLE`).
   - All-NH route with pass (all ₹0).
