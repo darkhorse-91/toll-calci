@@ -13,6 +13,7 @@ from fastapi.responses import JSONResponse
 from psycopg_pool import AsyncConnectionPool
 from pydantic import BaseModel, ConfigDict, Field
 
+from .admin import admin_router
 from .clients.photon import PhotonClient, PlaceItem
 from .clients.valhalla import ValhallaClient
 from .engine import (
@@ -80,6 +81,7 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
 
 
 app = FastAPI(title="India Toll Price MVP Quote API", lifespan=lifespan)
+app.include_router(admin_router)
 
 
 # Custom Error Envelope Handlers

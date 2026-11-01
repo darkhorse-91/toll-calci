@@ -33,7 +33,11 @@ photon_data/
 *.pbf
 *.pmtiles
 
-# OS & IDE
+# Test & Coverage artifacts
+.coverage
+htmlcov/
+test-results/
+playwright-report/
 .DS_Store
 Thumbs.db
 .idea/

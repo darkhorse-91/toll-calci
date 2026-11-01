@@ -1,0 +1,21 @@
+from_name,from_lat,from_lng,to_name,to_lat,to_lng,vehicle_class,commercial,journey,travel_date,has_pass,trips_left,expected_without_pass_inr,expected_with_pass_inr
+Lucknow to Unnao (Car No Pass),26.75,80.80,Unnao,26.40,80.00,CAR_JEEP_VAN,false,ONE_WAY,2026-11-02,false,,100,100
+Lucknow to Unnao (Car With Pass),26.75,80.80,Unnao,26.40,80.00,CAR_JEEP_VAN,false,ONE_WAY,2026-11-02,true,50,100,0
+Lucknow to Unnao Return (Car No Pass),26.75,80.80,Unnao,26.40,80.00,CAR_JEEP_VAN,false,RETURN_24H,2026-11-02,false,,150,150
+Lucknow to Unnao Return (Car With Pass),26.75,80.80,Unnao,26.40,80.00,CAR_JEEP_VAN,false,RETURN_24H,2026-11-02,true,50,150,0
+Lucknow to Unnao (Commercial Ineligible),26.75,80.80,Unnao,26.40,80.00,CAR_JEEP_VAN,true,ONE_WAY,2026-11-02,true,50,100,100
+Lucknow to Unnao (LCV),26.75,80.80,Unnao,26.40,80.00,LCV,false,ONE_WAY,2026-11-02,false,,160,160
+Lucknow to Unnao (Bus/Truck 2-Axle),26.75,80.80,Unnao,26.40,80.00,BUS_TRUCK_2AXLE,false,ONE_WAY,2026-11-02,false,,335,335
+Lucknow to Unnao (3-Axle),26.75,80.80,Unnao,26.40,80.00,AXLE_3,false,ONE_WAY,2026-11-02,false,,365,365
+Lucknow to Unnao (4-6 Axle),26.75,80.80,Unnao,26.40,80.00,AXLE_4_6,false,ONE_WAY,2026-11-02,false,,525,525
+Lucknow to Unnao (7+ Axle Oversized),26.75,80.80,Unnao,26.40,80.00,AXLE_7_PLUS,false,ONE_WAY,2026-11-02,false,,640,640
+Lucknow to Akbarpur 2 Plazas (No Pass),26.75,80.80,Akbarpur,26.35,79.80,CAR_JEEP_VAN,false,ONE_WAY,2026-11-02,false,,220,220
+Lucknow to Akbarpur 2 Plazas (With Pass),26.75,80.80,Akbarpur,26.35,79.80,CAR_JEEP_VAN,false,ONE_WAY,2026-11-02,true,50,220,0
+Lucknow to Akbarpur (Pass Exhausted Midway),26.75,80.80,Akbarpur,26.35,79.80,CAR_JEEP_VAN,false,ONE_WAY,2026-11-02,true,1,220,120
+Lucknow to Akbarpur Return (No Pass),26.75,80.80,Akbarpur,26.35,79.80,CAR_JEEP_VAN,false,RETURN_24H,2026-11-02,false,,330,330
+Lucknow to Akbarpur Return (With Pass),26.75,80.80,Akbarpur,26.35,79.80,CAR_JEEP_VAN,false,RETURN_24H,2026-11-02,true,10,330,0
+Lucknow to Agra Expressway (No Pass),26.85,80.80,Agra,27.15,78.05,CAR_JEEP_VAN,false,ONE_WAY,2026-11-02,false,,655,655
+Lucknow to Agra Expressway (State Road Pass Inactive),26.85,80.80,Agra,27.15,78.05,CAR_JEEP_VAN,false,ONE_WAY,2026-11-02,true,50,655,655
+Lucknow to Kannauj Expressway Interchange,26.85,80.80,Kannauj,27.05,79.85,CAR_JEEP_VAN,false,ONE_WAY,2026-11-02,false,,270,270
+Kannauj to Agra Expressway Interchange,27.05,79.85,Agra,27.15,78.05,CAR_JEEP_VAN,false,ONE_WAY,2026-11-02,false,,385,385
+Lucknow to Unnao Previous FY (2025-26 Rate),26.75,80.80,Unnao,26.40,80.00,CAR_JEEP_VAN,false,ONE_WAY,2026-03-15,false,,95,95

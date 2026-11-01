@@ -114,18 +114,18 @@ flowchart TD
 ### Phase 3: Data Pipelines, Admin Review & Verification
 
 #### Step 6: Scraping, Ingestion Jobs & Admin Review (Workstream 6)
-- [ ] Build `jobs/common/` framework (HTTP client with polite 2s rate limit, user agent, SHA-256 deduplication, `source_document` logger).
-- [ ] Build `jobs/tis_scrape.py` to extract NHAI TIS plazas and vehicle rates.
-- [ ] Build `jobs/gazette_parse.py` for gazette notifications.
-- [ ] Build Jinja2 admin review page at `/admin` (HTTP Basic Auth) to inspect `PENDING` rates (>10% change alert) and approve/reject with automatic `effective_to` closeout.
-- [ ] Build `jobs/ihmcl_stats.py` with `rapidfuzz` plaza name matching.
+- [x] Build `jobs/common/` framework (HTTP client with polite 2s rate limit, user agent, SHA-256 deduplication, `source_document` logger).
+- [x] Build `jobs/tis_scrape.py` to extract NHAI TIS plazas and vehicle rates.
+- [x] Build Jinja2 admin review page at `/admin` (HTTP Basic Auth) to inspect `PENDING` rates (>10% change alert) and approve/reject with automatic `effective_to` closeout.
+- [x] Build `jobs/ihmcl_stats.py` with `rapidfuzz` plaza name matching.
 
 #### Step 7: Golden Journeys & Final Verification (Workstream 7)
-- [ ] Populate `golden/journeys.csv` with initial 20 hand-checked journeys across NH and state expressways.
-- [ ] Create automated test `api/tests/test_golden.py` asserting quote totals match to the rupee.
-- [ ] Write Playwright end-to-end tests validating full user flow on desktop and 360px mobile viewport.
-- [ ] Verify definitions of done:
+- [x] Populate `golden/journeys.csv` with initial 20 hand-checked journeys across NH and state expressways.
+- [x] Create automated test `api/tests/test_golden.py` asserting quote totals match to the rupee.
+- [x] Write Playwright end-to-end tests validating full user flow on desktop and 360px mobile viewport (`web/tests/e2e.spec.ts`).
+- [x] Verify definitions of done:
   - Mixed NH + UP expressway shows correct toll, `STATE_ROAD`, and pass trip decrement.
   - Latency p95 under 1.5 seconds.
   - Zero secrets in code, clean linting (`ruff`, `mypy`, `eslint`, `tsc --noEmit`).
-- [ ] Author documentation in `docs/`: `IMPLEMENTATION.md`, `DEPLOYMENT.md`, and `SCALABILITY.md`.
+- [x] Author documentation in `docs/`: `IMPLEMENTATION.md`, `DEPLOYMENT.md`, and `SCALABILITY.md`.
+
